@@ -20,55 +20,15 @@ import time
 import utils
 from dataloader import MNIST_Dataset, CIFAR10_Dataset, SVHN_Dataset, CIFARAdd10_Dataset, CIFARAdd50_Dataset, CIFARAddN_Dataset
 from custom_dataloader import Custom_Dataset
+from attrdict import AttrDict
 
 from model import LVAE
 from qmv import ocr_test
 
 def get_args():
-    parser = argparse.ArgumentParser(description='PyTorch OSR Example')
-    parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
-    parser.add_argument('--num_classes', type=int, default=10, help='number of classes')
-    parser.add_argument('--epochs', type=int, default=50, help='number of epochs to train (default: 50)')
-    parser.add_argument('--lr', type=float, default=0.001, help='learning rate (default: 1e-3)')
-    parser.add_argument('--wd', type=float, default=0.00, help='weight decay')
-    parser.add_argument('--momentum', type=float, default=0.01, help='momentum (default: 1e-3)')
-    parser.add_argument('--decreasing_lr', default='60,100,150', help='decreasing strategy')
-    parser.add_argument('--lr_decay', type=float, default=0.1, help='decreasing strategy')
-    parser.add_argument('--seed', type=int, default=117, help='random seed (default: 1)')
-    parser.add_argument('--seed_sampler', type=str, default='777 1234 2731 3925 5432', help='random seed for dataset sampler')
-    parser.add_argument('--log_interval', type=int, default=20,
-                        help='how many batches to wait before logging training status')
-    parser.add_argument('--val_interval', type=int, default=5, help='how many epochs to wait before another val')
-    parser.add_argument('--test_interval', type=int, default=5, help='how many epochs to wait before another test')
-    parser.add_argument('--lamda', type=int, default=100, help='lamda in loss function')
-    parser.add_argument('--beta_z', type=int, default=1, help='beta of the kl in loss function')
-    parser.add_argument('--beta_anneal', type=int, default=0, help='the anneal epoch of beta')
-    parser.add_argument('--threshold', type=float, default=0.5, help='threshold of gaussian model')
-    parser.add_argument('--tensorboard', action="store_true", default=False, help='If use tensorboard')
-    parser.add_argument('--debug', action="store_true", default=False, help='If debug mode')
-
-    # train
-    parser.add_argument('--dataset', type=str, default="Custom_Dataset", help='The dataset going to use') # Default input changed to Custom_Dataset
-    parser.add_argument('--eval', action="store_true", default=False, help='directly eval?')
-    parser.add_argument('--baseline', action="store_true", default=False, help='If is the bseline?')
-    parser.add_argument('--use_model', action="store_true", default=False, help='If use model to get the train feature')
-    parser.add_argument('--encode_z', type=int, default=None, help='If encode z and dim of z')
-    parser.add_argument("--contrastive_loss", action="store_true", default=False, help="Use contrastive loss")
-    parser.add_argument("--temperature", type=float, default=1.0, help="Temperature for contrastive loss")
-    parser.add_argument("--contra_lambda", type=float, default=1.0, help="Scaling factor of contrastive loss")
-    parser.add_argument("--save_epoch", type=int, default=None, help="save model in this epoch")
-    parser.add_argument("--exp", type=int, default=0, help="which experiment")
-    parser.add_argument("--unseen_num", type=int, default=13, help="unseen class num in CIFAR100")
-
-    # test
-    parser.add_argument('--cf', action="store_true", default=False, help='use counterfactual generation')
-    parser.add_argument('--cf_threshold', action="store_true", default=False, help='use counterfactual threshold in revise_cf')
-    parser.add_argument('--yh', action="store_true", default=False, help='use yh rather than feature_y_mean')
-    parser.add_argument('--use_model_gau', action="store_true", default=False, help='use feature by model in gau')
-
-
-    args = parser.parse_args()
-    return args
+    args = utils.load_yaml('./configs/lvae_train.yaml')
+    dataset_args = utils.load_yaml('./configs/custom_dataloader.yaml')
+    return AttrDict(args), dataset_args
 
 def control_seed(args):
     # seed
@@ -344,7 +304,16 @@ def train(args, lvae):
 
 if __name__ == '__main__':
 
-    args = get_args()
+    args, dataset_args = get_args()
+    _seen_labels = {}
+    for d in dataset_args['seen_labels']:
+        _seen_labels.update(d)
+    _unseen_labels = {}
+    for d in dataset_args['unseen_labels']:
+        _unseen_labels.update(d)
+    dataset_args['seen_labels'] = _seen_labels
+    dataset_args['unseen_labels'] = _unseen_labels
+    
     control_seed(args)
 
     if args.dataset == "MNIST":
@@ -402,9 +371,9 @@ if __name__ == '__main__':
 
         # data loader
         if args.dataset == 'Custom_Dataset':
-            train_dataset = Custom_Dataset('train')
-            val_dataset = Custom_Dataset('val')
-            test_dataset = Custom_Dataset('test')
+            train_dataset = Custom_Dataset('train', dataset_args)
+            val_dataset = Custom_Dataset('val', dataset_args)
+            test_dataset = Custom_Dataset('test', dataset_args)
         else:
             train_dataset, val_dataset, test_dataset = load_dataset.sampler(seed_sampler, args)
 

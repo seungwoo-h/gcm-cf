@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import shutil
+import yaml
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
@@ -106,3 +107,8 @@ class LabelSmoothingLoss(nn.Module):
 			true_dist.fill_(self.smoothing / (self.cls - 1))
 			true_dist.scatter_(1, target.data.unsqueeze(1), self.confidence)
 		return torch.mean(torch.sum(-true_dist * pred, dim=self.dim))
+
+def load_yaml(path):
+    
+	with open(path, 'r') as f:
+		return yaml.load(f, Loader=yaml.FullLoader)

@@ -1,0 +1,37 @@
+batch_size: 64
+epochs: 50
+lr: 0.001
+wd: 0.00
+momentum: 0.01
+decreasing_lr: '60,100,150'
+lr_decay: 0.1
+seed: 117
+seed_sampler: '777 1234 2731 3925 5432'
+log_interval: 20
+val_interval: 5
+test_interval: 5
+lambda: 100
+beta_z: 1
+beta_anneal: 0
+threshold: 0.5
+tensorboard: False
+debug: False
+
+# Train
+dataset: Custom_Dataset
+eval: False
+baseline: False
+use_model: False
+encode_z: None
+contrastive_loss: False
+temperature: 1.0
+contra_lambda: 1.0
+save_epoch: None
+exp: 0
+unseen_num: 13
+
+# Test
+cf: False
+cf_threshold: False
+yh: False
+use_model_gau: False

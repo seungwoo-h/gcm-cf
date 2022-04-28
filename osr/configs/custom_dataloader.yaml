@@ -1,0 +1,10 @@
+seen_labels:
+  - horse: 0
+  - person: 1
+  - house: 2
+  - dog: 3
+
+unseen_labels:
+  - guitar: 0
+  - giraffe: 1
+  - elephant: 2

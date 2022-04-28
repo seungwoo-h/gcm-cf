@@ -1,7 +1,7 @@
 import torch
 from torch.autograd import Variable
 import os
-os.environ['R_HOME'] = 'xxxx/lib/R'
+os.environ['R_HOME'] = '/usr/lib/R'
 from rpy2.robjects.packages import importr
 from rpy2.robjects import numpy2ri
 import numpy as np

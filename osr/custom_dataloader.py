@@ -6,8 +6,7 @@ from torch.utils.data import Dataset
 
 class Custom_Dataset(Dataset):
     
-    def __init__(self, subset, root='./data/'):
-  
+    def __init__(self, subset, args, root='./data/'):
         """
         subset: 'train' / 'val' / 'test'
         train -> seen in train
@@ -23,8 +22,8 @@ class Custom_Dataset(Dataset):
             root/cat/nsdf3.png
             root/cat/[...]/asd932_.png
         """
-        seen_labels = {'horse': 0, 'person': 1, 'house': 2, 'dog': 3} # IMPORTANT
-        unseen_labels = {'guitar': 0, 'giraffe': 1, 'elephant': 2} # IMPORTANT
+        seen_labels = args['seen_labels']
+        unseen_labels = args['unseen_labels']
         if subset == 'train':
             train_img_dir = os.path.join(root, 'train')
             self.dataset = []
@@ -51,15 +50,16 @@ class Custom_Dataset(Dataset):
                 transforms.RandomHorizontalFlip(0.5),
                 transforms.RandomRotation(10),
                 transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465),
-                                     (0.2023, 0.1994, 0.2010)),
+                transforms.Normalize((0.485, 0.456, 0.406),
+                                     (0.229, 0.224, 0.225)),
             ])
             
         elif subset == 'val' or subset == 'test':
             self.transform = transforms.Compose([
                 transforms.Resize(32),
                 transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+                transforms.Normalize((0.485, 0.456, 0.406),
+                                     (0.229, 0.224, 0.225)),  
             ])
         
     def __getitem__(self, idx):
