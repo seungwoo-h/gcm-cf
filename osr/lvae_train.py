@@ -367,14 +367,6 @@ if __name__ == '__main__':
         load_dataset = CIFARAdd50_Dataset()
         args.num_classes = 4
         in_channel = 3
-    elif args.dataset == "TinyImageNet":
-        load_dataset = TinyImageNet_Dataset()
-        args.num_classes = 20
-        in_channel = 3
-    elif args.dataset == "CIFAR100":
-        load_dataset = CIFAR100_Dataset()
-        args.num_classes = 15
-        in_channel = 3
     elif args.dataset == "CIFARAddN":
         load_dataset = CIFARAddN_Dataset()
         args.num_classes = 4
@@ -415,7 +407,7 @@ if __name__ == '__main__':
             test_dataset = Custom_Dataset('test')
         else:
             train_dataset, val_dataset, test_dataset = load_dataset.sampler(seed_sampler, args)
-                
+
         train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=0)
         val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0)
         test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0)
