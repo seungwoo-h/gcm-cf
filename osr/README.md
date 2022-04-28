@@ -1,4 +1,5 @@
 # GCM-CF OSR
+
 ### Overview
 
 This is the official code of the **OSR** task for the paper "Counterfactual Zero-shot and Open-Set Visual Recognition". The codebase is built based on the [CGDL](https://github.com/BraveGump/CGDL-for-Open-Set-Recognition) (The code is now deleted by the original author).

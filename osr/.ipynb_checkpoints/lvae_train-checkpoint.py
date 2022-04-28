@@ -19,10 +19,11 @@ import os
 import time
 import utils
 from dataloader import MNIST_Dataset, CIFAR10_Dataset, SVHN_Dataset, CIFARAdd10_Dataset, CIFARAdd50_Dataset, CIFARAddN_Dataset
-from custom_dataloader import Custom_Dataset
-
+#from keras.utils import to_categorical
 from model import LVAE
 from qmv import ocr_test
+
+# os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
 def get_args():
     parser = argparse.ArgumentParser(description='PyTorch OSR Example')
@@ -48,7 +49,7 @@ def get_args():
     parser.add_argument('--debug', action="store_true", default=False, help='If debug mode')
 
     # train
-    parser.add_argument('--dataset', type=str, default="Custom_Dataset", help='The dataset going to use') # Default input changed to Custom_Dataset
+    parser.add_argument('--dataset', type=str, default="MNIST", help='The dataset going to use')
     parser.add_argument('--eval', action="store_true", default=False, help='directly eval?')
     parser.add_argument('--baseline', action="store_true", default=False, help='If is the bseline?')
     parser.add_argument('--use_model', action="store_true", default=False, help='If use model to get the train feature')
@@ -409,13 +410,7 @@ if __name__ == '__main__':
         device = torch.device("cuda" if use_cuda else "cpu")
 
         # data loader
-        if args.dataset == 'Custom_Dataset':
-            train_dataset = Custom_Dataset('train')
-            val_dataset = Custom_Dataset('val')
-            test_dataset = Custom_Dataset('test')
-        else:
-            train_dataset, val_dataset, test_dataset = load_dataset.sampler(seed_sampler, args)
-                
+        train_dataset, val_dataset, test_dataset = load_dataset.sampler(seed_sampler, args)
         train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=0)
         val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0)
         test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0)
