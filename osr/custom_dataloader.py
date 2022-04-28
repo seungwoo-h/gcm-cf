@@ -1,13 +1,13 @@
+import os
+from glob import glob
 from PIL import Image
-import torch
 import torchvision.transforms as transforms
 from torch.utils.data import Dataset
 
 class Custom_Dataset(Dataset):
     
     def __init__(self, subset, root='./data/'):
-        import os
-        from glob import glob
+  
         """
         subset: 'train' / 'val' / 'test'
         train -> seen in train
