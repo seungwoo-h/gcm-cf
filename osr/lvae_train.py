@@ -340,6 +340,9 @@ if __name__ == '__main__':
         load_dataset = CIFARAddN_Dataset()
         args.num_classes = 4
         in_channel = 3
+    elif args.dataset == 'Custom_Dataset':
+        args.num_classes = len(dataset_args['seen_labels'])
+        in_channel = 3 # COLOR OR BW
 
     exp_name = utils.get_exp_name(args)
     print("Experiment: %s" % exp_name)
